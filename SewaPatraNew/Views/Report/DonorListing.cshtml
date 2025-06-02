@@ -1,0 +1,94 @@
+﻿@using DevExtreme.AspNet.Mvc
+@{
+    ViewData["Title"] = "Dnnor Listing ";
+}
+@model List<SewaPatra.Models.ReportModels.DonorListingReport>
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="pagetitle mt-2">
+                        <h1>Donor Listing Report</h1>
+                        <nav>
+                            <ol class="breadcrumb">
+                                @* <li class="breadcrumb-item"><a href="index.html">Home</a></li> *@
+                                <li class="breadcrumb-item">Report</li>
+                                <li class="breadcrumb-item active">Donor Report</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div id="gridContainer">
+                        @(Html.DevExtreme().DataGrid()
+                            .ID("DonorlistingReport")
+                            .ShowBorders(true)
+                            .DataSource(Model)
+                            .KeyExpr("Id")
+                            .RemoteOperations(false)
+                            .AllowColumnReordering(true)
+                            .RowAlternationEnabled(true)
+                            .Width("100%")
+                            .Paging(prop => prop.PageSize(10))
+                            .Pager(p => p.Visible(true)
+                            .ShowPageSizeSelector(true)
+                            .AllowedPageSizes(new[] { 10, 25, 50, 100 }))
+                            .SearchPanel(s => s.Visible(true).HighlightCaseSensitive(true))
+                            .GroupPanel(g => g.Visible(true))
+                            .Grouping(g => g.AutoExpandAll(false))
+                            .AllowColumnResizing(true)
+                            .ColumnHidingEnabled(true)
+                            .ColumnChooser(c => c.Enabled(true))
+                            .Sorting(sorting => sorting.Mode(GridSortingMode.Multiple))
+                            .Export(e => e
+                            .Enabled(true)
+                            .Formats(new[] { "xlsx" })
+                            )
+                            .OnExporting("exportToExcel")
+                            .Columns(c =>
+                            {
+                                c.Add().DataField("SNo").Width(45).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">SNo</div></text>);
+                                c.Add().DataField("DonorId").Width(40).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Id</div></text>);
+                                c.Add().DataField("Name").HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Name</div></text>);
+                                c.Add().DataField("Contact").Width(100).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Contact</div></text>);
+                                c.Add().DataField("Address").HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Address</div></text>);
+                                c.Add().DataField("City").Width(90).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">City</div></text>);
+                                c.Add().DataField("AltContact").Width(100).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">AltContact</div></text>);
+                                c.Add().DataField("Email").HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Email</div></text>);
+                                c.Add().DataField("CoordinatorName").Width(110).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Coordinator</div></text>);
+                                c.Add().DataField("Area").Width(100).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Area</div></text>);
+                                c.Add().DataField("Status").HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Status</div></text>);
+                            })
+                            )
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    function showColumnChooser(e) {
+        e.component.showColumnChooser();
+    }
+    function exportToExcel(e) {
+        if (e.format === "xlsx") {
+            // Excel export (your existing code)
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('DonorlistingReport');
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                customizeCell: function(options) {
+                    if (options.gridCell.rowType === "header") {
+                        options.font = { bold: true };
+                    }
+                }
+            }).then(function() {
+                workbook.xlsx.writeBuffer().then(function(buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "DonorlistingReport.xlsx");
+                });
+            });
+            e.cancel = true;
+        }
+    }
+</script>

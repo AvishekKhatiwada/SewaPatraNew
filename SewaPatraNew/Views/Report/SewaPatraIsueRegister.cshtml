@@ -1,0 +1,208 @@
+﻿@using DevExtreme.AspNet.Mvc
+@using System.ComponentModel;
+@{
+    ViewData["Title"] = "SewaPatra Issue Register";
+}
+@model List<SewaPatra.Models.ReportModels.SewaPatraIssueRegister>
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="pagetitle mt-2">
+                        <h1>Sewapatra Issue Register</h1>
+                        <nav>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">Report</li>
+                                <li class="breadcrumb-item active">SewaPatra Issue Register</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <form asp-action="SewaPatraIsueRegister" asp-controller="Report" method="post">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="fromDate" class="form-label">From Date:</label>
+                                <input type="date" id="fromDate" class="form-control" name="fromDate" value="" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="toDate" class="form-label">To Date:</label>
+                                <input type="date" id="toDate" class="form-control" name="toDate" value="" />
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary" >Filter</button>
+                            </div>
+                        </div>
+                    </form>    
+                    <div id="gridContainer">
+                        @(Html.DevExtreme().DataGrid()
+                            .ID("SewaPatraRegister")
+                            .ShowBorders(true)
+                            .DataSource(Model)
+                            .KeyExpr("Id")
+                            .RemoteOperations(false)
+                            .AllowColumnReordering(true)
+                            .RowAlternationEnabled(true)
+                            .Width("100%")
+                            .Paging(prop => prop.PageSize(10))
+                            .Pager(p => p.Visible(true)
+                            .ShowPageSizeSelector(true)
+                            .AllowedPageSizes(new[] { 10, 25, 50, 100 }))
+                            .SearchPanel(s => s.Visible(true).HighlightCaseSensitive(true))
+                            .GroupPanel(g => g.Visible(true))
+                            .Grouping(g => g.AutoExpandAll(false))
+                            .AllowColumnResizing(true)
+                            .ColumnHidingEnabled(true)
+                            .ColumnChooser(c => c.Enabled(true))
+                            //.FilterRow(f => f.Visible(true))
+                            .Sorting(sorting => sorting.Mode(GridSortingMode.Multiple))
+                            //.Export(e => e.Enabled(true))
+                            //.OnExporting("function(e) { e.cancel = false; }")
+                            //.Selection(s => s.Mode(SelectionMode.Multiple))
+                            //.Export(e => e.Enabled(true))
+                            .Export(e => e
+                            .Enabled(true)
+                            .Formats(new[] { "xlsx" })
+                            )
+                            .OnExporting("exportToExcel")
+                            .Columns(c =>
+                            {
+                                c.Add().DataField("TranId").Width(70).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">TranId</div></text>);
+                                c.Add().DataField("Date").Width(90).DataType(GridColumnDataType.Date).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Date</div></text>);
+                                c.Add().DataField("DonorName").Width(100).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">DonorName</div></text>);
+                                c.Add().DataField("DonorArea").Width(90).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">DonorArea</div></text>);
+                                c.Add().DataField("CoordinatorName").Width(135).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">CoordinatorName</div></text>);
+                                c.Add().DataField("CoordinatorArea").Width(130).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">CoordinatorArea</div></text>);
+                                c.Add().DataField("DonationBox").Width(102).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">DonationBox</div></text>);
+                                c.Add().DataField("Recurring").Width(80).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Recurring</div></text>);
+                                c.Add().DataField("IssueDate").Width(90).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">IssueDate</div></text>);
+                                c.Add().DataField("DueDate").Width(90).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">DueDate</div></text>);
+                                c.Add().DataField("Remarks").Width(200).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Remarks</div></text>);
+                            })
+                            )
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* <script>
+    function filterReport() {
+        var fromDate = document.getElementById("fromDate").value || null;
+        var toDate = document.getElementById("toDate").value || null;
+
+        // If fromDate is empty, set to null
+        if (fromDate === "") {
+            fromDate = null;
+        }
+
+        // If toDate is empty, set to null
+        if (toDate === "") {
+            toDate = null;
+        }
+
+        // Make an AJAX request to the server to fetch the filtered data
+        $.ajax({
+            url: '@Url.Action("SewaPatraIsueRegister", "Report")', // This will call the GetReport action in MasterController
+            type: 'GET',
+            data: {
+                fromDate: fromDate,
+                toDate: toDate
+            },
+            success: function (response) {
+                // On success, update the data grid with the filtered data
+                var dataGrid = $("#SewaPatraRegister").dxDataGrid("instance");
+                dataGrid.option("dataSource", response); // Assuming the response is the filtered data
+            },
+            error: function (xhr, status, error) {
+                alert("There was an error while fetching the data: " + error);
+            }
+        });
+    }
+</script> *@
+
+
+<script>
+       
+    function showColumnChooser(e) {
+        e.component.showColumnChooser();
+    }
+function filterReport() {
+    var fromDate = document.getElementById("fromDate").value || null;
+    var toDate = document.getElementById("toDate").value || null;
+
+    // Function to format date in "YYYY-MM-DD HH:mm:ss.fff"
+    function formatDateTime(dateString, isEndOfDay = false) {
+        if (!dateString) return null;
+        let date = new Date(dateString);
+        let year = date.getFullYear();
+        let month = String(date.getMonth() + 1).padStart(2, "0"); // Month is zero-based
+        let day = String(date.getDate()).padStart(2, "0");
+        let hours = isEndOfDay ? "23" : "00"; // Start of day or End of day
+        let minutes = isEndOfDay ? "59" : "00";
+        let seconds = isEndOfDay ? "59" : "00";
+        let milliseconds = isEndOfDay ? "999" : "000";
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+    }
+
+    // Format dates
+    fromDate = formatDateTime(fromDate);
+    toDate = formatDateTime(toDate, true); // End of day
+
+    // AJAX request to the MasterController
+    $.ajax({
+            url: '@Url.Action("SewaPatraIsueRegister", "Report")',
+        type: 'GET',
+        data: {
+            fromDate: fromDate,
+            toDate: toDate
+        },
+        success: function (response) {
+            var dataGrid = $("#SewaPatraRegister").dxDataGrid("instance");
+            dataGrid.option("dataSource", response);
+        },
+        error: function (xhr, status, error) {
+            alert("There was an error while fetching the data: " + error);
+        }
+    });
+}
+     function exportToExcel(e) {
+        if (e.format === "xlsx") {
+            // Excel export (your existing code)
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('SewaPatraRegister');
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                customizeCell: function(options) {
+                    if (options.gridCell.rowType === "header") {
+                        options.font = { bold: true };
+                    }
+                }
+            }).then(function() {
+                workbook.xlsx.writeBuffer().then(function(buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "SewaPatraRegister.xlsx");
+                });
+            });
+            e.cancel = true;
+        }
+        else if (e.format === "pdf") {
+            // PDF export (using pdfmake)
+            DevExpress.pdfExporter.exportDataGrid({
+                component: e.component,
+                customizeDoc: function(doc) {
+                    doc.pageMargins = [20, 20, 20, 20]; // Margins (left, top, right, bottom)
+                    doc.defaultStyle = { fontSize: 10 };
+                    // Adjust table widths to match your column count (11 columns)
+                    doc.content[0].table.widths = Array(11).fill('*');
+                }
+            }).then(function(buffer) {
+                saveAs(new Blob([buffer], { type: "application/pdf" }), "SewaPatraRegister.pdf");
+            });
+            e.cancel = true;
+        }
+    }
+
+</script>

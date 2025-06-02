@@ -1,0 +1,222 @@
+﻿@using DevExtreme.AspNet.Mvc
+@using System.ComponentModel;
+@{
+    ViewData["Title"] = "Collection Analysis Report";
+}
+@model List<SewaPatra.Models.ReportModels.SewaPatraIssueRegister>
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="pagetitle mt-2">
+                        <h1>Collection Analysis Report</h1>
+                        <nav>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">Report</li>
+                                <li class="breadcrumb-item active">Collection Analysis Report</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <form asp-action="CollectionAnalysisReport" asp-controller="Report" method="post">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="fromDate" class="form-label">From Date:</label>
+                                <input type="date" id="fromDate" class="form-control" name="fromDate" value="" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="toDate" class="form-label">To Date:</label>
+                                <input type="date" id="toDate" class="form-control" name="toDate" value="" />
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary" >Filter</button>
+                            </div>
+                        </div>
+                    </form>    
+                    <div id="gridContainer">
+                        @(Html.DevExtreme().DataGrid()
+                                .ID("CollectionAnalysis")
+                                .ShowBorders(true)
+                                .DataSource(Model)
+                                .KeyExpr("Id")
+                                .RemoteOperations(false)
+                                .AllowColumnReordering(true)
+                                .RowAlternationEnabled(true)
+                                .Width("100%")
+                                .Paging(prop => prop.PageSize(10))
+                                .Pager(p => p.Visible(true)
+                                .ShowPageSizeSelector(true)
+                                .AllowedPageSizes(new[] { 10, 25, 50, 100 }))
+                                .SearchPanel(s => s.Visible(true).HighlightCaseSensitive(true))
+                                .GroupPanel(g => g.Visible(true))
+                                .Grouping(g => g.AutoExpandAll(false))
+                                .AllowColumnResizing(true)
+                                .ColumnHidingEnabled(true)
+                                .ColumnChooser(c => c.Enabled(true))
+                                .Sorting(sorting => sorting.Mode(GridSortingMode.Multiple))
+                                .Export(e => e
+                                .Enabled(true)
+                                .Formats(new[] { "xlsx" })
+                                )
+                                .OnExporting("exportToExcel")
+                                .Columns(c =>
+                                {
+                                    // Receipt Voucher Information
+                                    c.Add().DataField("ReceiptVoucherNo").Width(100)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Voucher No</div></text>);
+                                    c.Add().DataField("ReceiptDate").Width(90).DataType(GridColumnDataType.Date).Format("dd/MM/yyyy")
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Receipt Date</div></text>);
+
+                                    c.Add().DataField("SewaPatraNo").Width(90)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">SewaPatra No</div></text>);
+
+                                    c.Add().DataField("CollectionAmount").Width(100).Format("#,##0.00")
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Amount</div></text>);
+
+                                    c.Add().DataField("NextDueDate").Width(90).DataType(GridColumnDataType.Date).Format("dd/MM/yyyy")
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Next Due</div></text>);
+
+                                    // Donor Information
+                                    c.Add().DataField("DonorName").Width(150)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Donor Name</div></text>);
+
+                                    c.Add().DataField("DonorMobile").Width(100)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Donor Mobile</div></text>);
+
+                                    c.Add().DataField("DonorArea").Width(120)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Donor Area</div></text>);
+
+                                    c.Add().DataField("AreaType").Width(90)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Area Type</div></text>);
+
+                                    // Coordinator Information
+                                    c.Add().DataField("CoordinatorName").Width(150)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Coordinator</div></text>);
+
+                                    c.Add().DataField("CoordinatorMobile").Width(100)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Coord Mobile</div></text>);
+
+                                    // SewaPatra Information
+                                    c.Add().DataField("DonationBoxNo").Width(100)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Box No</div></text>);
+
+                                    c.Add().DataField("RecurringType").Width(90)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Recurring</div></text>);
+
+                                    c.Add().DataField("IssueDate").Width(90).DataType(GridColumnDataType.Date).Format("dd/MM/yyyy")
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Issue Date</div></text>);
+
+                                    c.Add().DataField("OriginalDueDate").Width(90).DataType(GridColumnDataType.Date).Format("dd/MM/yyyy")
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Due Date</div></text>);
+
+                                    // Payment Information
+                                    c.Add().DataField("PaymentVoucherNo").Width(100)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Payment Voucher</div></text>);
+
+                                    c.Add().DataField("PaymentStatus").Width(90)
+                                            .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Status</div></text>)
+                                        .CellTemplate(@<text>
+                                        <span style="color:<%= data.PaymentStatus == 'Overdue' ? 'red' : data.PaymentStatus == 'Final Payment' ? 'green' : 'black' %>">
+                                            <%= data.PaymentStatus %>
+                                        </span>
+                                    </text>);
+
+                                    // Calculated Fields
+                                    c.Add().DataField("DaysBetweenIssueAndCollection").Width(80)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Days</div></text>);
+
+                                    // Remarks
+                                    c.Add().DataField("ReceiptRemarks").Width(200)
+                                .HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Remarks</div></text>);
+                                })
+                                )
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    function showColumnChooser(e) {
+        e.component.showColumnChooser();
+    }
+function filterReport() {
+    var fromDate = document.getElementById("fromDate").value || null;
+    var toDate = document.getElementById("toDate").value || null;
+
+    // Function to format date in "YYYY-MM-DD HH:mm:ss.fff"
+    function formatDateTime(dateString, isEndOfDay = false) {
+        if (!dateString) return null;
+        let date = new Date(dateString);
+        let year = date.getFullYear();
+        let month = String(date.getMonth() + 1).padStart(2, "0"); // Month is zero-based
+        let day = String(date.getDate()).padStart(2, "0");
+        let hours = isEndOfDay ? "23" : "00"; // Start of day or End of day
+        let minutes = isEndOfDay ? "59" : "00";
+        let seconds = isEndOfDay ? "59" : "00";
+        let milliseconds = isEndOfDay ? "999" : "000";
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+    }
+
+    // Format dates
+    fromDate = formatDateTime(fromDate);
+    toDate = formatDateTime(toDate, true); // End of day
+
+    // AJAX request to the MasterController
+    $.ajax({
+            url: '@Url.Action("SewaPatraIsueRegister", "Report")',
+        type: 'GET',
+        data: {
+            fromDate: fromDate,
+            toDate: toDate
+        },
+        success: function (response) {
+            var dataGrid = $("#CollectionAnalysis").dxDataGrid("instance");
+            dataGrid.option("dataSource", response);
+        },
+        error: function (xhr, status, error) {
+            alert("There was an error while fetching the data: " + error);
+        }
+    });
+}
+     function exportToExcel(e) {
+        if (e.format === "xlsx") {
+            // Excel export (your existing code)
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('CollectionAnalysis');
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                customizeCell: function(options) {
+                    if (options.gridCell.rowType === "header") {
+                        options.font = { bold: true };
+                    }
+                }
+            }).then(function() {
+                workbook.xlsx.writeBuffer().then(function(buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "CollectionAnalysis.xlsx");
+                });
+            });
+            e.cancel = true;
+        }
+        else if (e.format === "pdf") {
+            // PDF export (using pdfmake)
+            DevExpress.pdfExporter.exportDataGrid({
+                component: e.component,
+                customizeDoc: function(doc) {
+                    doc.pageMargins = [20, 20, 20, 20]; // Margins (left, top, right, bottom)
+                    doc.defaultStyle = { fontSize: 10 };
+                    // Adjust table widths to match your column count (11 columns)
+                    doc.content[0].table.widths = Array(11).fill('*');
+                }
+            }).then(function(buffer) {
+                saveAs(new Blob([buffer], { type: "application/pdf" }), "CollectionAnalysis.pdf");
+            });
+            e.cancel = true;
+        }
+    }
+
+</script>

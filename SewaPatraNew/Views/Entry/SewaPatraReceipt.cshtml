@@ -1,0 +1,143 @@
+﻿@model SewaPatra.Models.SewaPatraReceipt;
+
+@{
+    ViewBag.Title = "SewaPatra Receipt";
+}
+@if (TempData["Message"] != null)
+{
+    <div id="toastMessage" class="custom-toast">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Message"]
+    </div>
+}
+<div class="card-body">
+    <div class="pagetitle mt-2">
+        <h1>SewaPatra Receipt</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">Entry</li>
+                <li class="breadcrumb-item">Add SewaPatra Receipt</li>
+                @* <li class="breadcrumb-item active">Add Area</li> *@
+            </ol>
+        </nav>
+    </div>
+    <!-- Vertical Form -->
+    <form method="post" asp-action="SewaPatraReceipt" asp-controller="Entry">
+        <div class="row mb-2">
+            <label asp-for="SPR_TranId" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Receipt Id</label>
+            <div class="col-sm-1">
+                <input type="text" class="form-control" style="font-size: 10px;" asp-for="SPR_TranId" value="@ViewBag.TransactionId" id="SPR_TranId" readonly>
+            </div>
+            <label asp-for="SPI_TranId" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Issue Id</label>
+            <div class="col-sm-2">
+                <select asp-for="SPI_TranId" asp-items="@ViewBag.SewaPatraIssues" style="font-size: 10px;" id="SewaPatraIssueId" class="form-select" aria-label="Select Issues Voucher"></select>
+            </div>
+                <label asp-for="Date" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Date</label>
+            <div class="col-sm-4">
+                <input type="date" class="form-control" style="font-size: 10px;" asp-for="Date" id="enteredDate"/>
+            </div>
+        </div>
+        @* <div class="row mb-2">
+
+        </div> *@
+        <div class="row mb-2">
+            <label asp-for="Donor" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Donor</label>
+            <div class="col-sm-4">
+                <select asp-for="Donor" asp-items="@ViewBag.Donors" style="font-size: 10px;" class="form-select" id="Donorid" aria-label="Select Donor"></select>
+            </div>
+            <label asp-for="Coordinator" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Coordinator</label>
+            <div class="col-sm-4">
+                <select asp-for="Coordinator" asp-items="@ViewBag.Coordinators" style="font-size: 10px;" id="CoordinatorId" class="form-select" aria-label="Select Coordinator"></select>
+            </div>
+        </div>
+        @* <div class="row mb-2">
+
+        </div> *@
+        <div class="row mb-2">
+            <label asp-for="DonationBox" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">SewaPatra</label>
+            <div class="col-sm-4">
+                <select asp-for="DonationBox" asp-items="@ViewBag.DonationBoxes" style="font-size: 10px;" id="SewapatraID" class="form-select" aria-label="Select DonationBox"></select>
+            </div>
+            <label asp-for="Receive_Date" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Issue Date</label>
+            <div class="col-sm-4">
+                <input type="date" class="form-control" style="font-size: 10px;" asp-for="Receive_Date" id="receiveDate">
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <label asp-for="Remarks" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Remarks</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" style="font-size: 10px;" asp-for="Remarks" id="remarks">
+            </div>
+        </div>
+        <div class="text-Left">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="~/Entry/SewaPatraReceiptList" class="btn btn-primary">Cancel</a>
+        </div>
+    </form>
+</div>
+<script>
+    $(document).ready(function(){
+        const enteredDateInput = document.getElementById('enteredDate');
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        enteredDateInput.value = `${year}-${month}-${day}`;
+
+        //For Auto Search in Select Option
+        $('select').select2({
+        placeholder: 'Search here...',
+                width: 'resolve'
+        });
+        $('#SewaPatraIssueId').change(function () {
+            var SewaPatraIssueId = $(this).val();
+            $.ajax({
+                url: '/Entry/GetsewaPatraIssueDetails',
+                method: 'GET',
+                data: {id: SewaPatraIssueId},
+                dataType: 'json',
+                success: function(data)
+                {
+                    setData(data);
+                },
+                error: function(jqXHR, textStatus, errorThrown)
+                {
+                    console.error('Fetching Donor Data Error:', textStatus, errorThrown);
+                    displayError(textStatus, errorThrown);
+                }
+            });
+        });
+        function displayError(textStatus, errorThrown) {
+            const errorContainer = $('#error-container');
+            if(errorContainer.length){
+                errorContainer.text("An error occured: " + textStatus + ", " + errorThrown);
+            }
+        }
+        function setData(data)
+        {
+            debugger;
+            var coordinator = data.Coordinator;
+            var donor = data.Donor;
+            var donationBox = data.DonationBox;
+            var Issue_Date = data.Issue_Date;
+
+            $("#CoordinatorId").val(coordinator).trigger('change');
+            $("#Donorid").val(donor).trigger('change');
+            $("#SewapatraID").val(donationBox).trigger('change');
+            if(Issue_Date && typeof Issue_Date === 'string' && Issue_Date.length >= 10)
+            {
+                let formattedDate = Issue_Date.substring(0, 10);
+                if (/^\d{4}-\d{2}-\d{2}$/.test(formattedDate)) {
+                    $("#receiveDate").val(formattedDate).trigger('change');
+                    console.log("Successfully set date input (substring) to:", formattedDate);
+                } else {
+                    console.error("Substring is not YYYY-MM-DD:", formattedDate);
+                    $("#receiveDate").val(""); // Clear input on error
+                }
+            }else {
+                console.error("The provided Issue_Date is not a valid Date object");
+            }
+            
+        }
+    });    
+</script>

@@ -1,0 +1,146 @@
+﻿@model SewaPatra.Models.ReceiptVoucher;
+
+@{
+    ViewBag.Title = "Receipt Voucher";
+}
+@if (TempData["Message"] != null)
+{
+    <div id="toastMessage" class="custom-toast">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Message"]
+    </div>
+}
+<div class="card-body">
+    <div class="pagetitle mt-2">
+        <h1>Receipt Voucher</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">Entry</li>
+                <li class="breadcrumb-item">Receipt Voucher</li>
+            </ol>
+        </nav>
+    </div>
+    <!-- Vertical Form -->
+    <form method="post" asp-action="ReceiptVoucher" asp-controller="Entry">
+        <div class="row mb-2">
+            <label asp-for="R_TranId" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Voucher Id</label>
+            <div class="col-sm-1">
+                <input type="text" class="form-control" style="font-size: 10px;" asp-for="R_TranId" id="TranId" value="@ViewBag.TransactionId" readonly>
+            </div>
+            <label asp-for="SPI_ID" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Issue Id</label>
+            <div class="col-sm-2">
+                <Select type="text" class="form-select" asp-items="@ViewBag.SewaPatraIssues" style="font-size: 10px;" asp-for="SPI_ID" id="SewPatraIssueId" aria-label="Select Sewapatra Issue">
+                </Select>
+            </div>
+            <label asp-for="Date" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Date</label>
+            <div class="col-sm-2">
+                <input type="date" class="form-control" style="font-size: 10px;" asp-for="Date" id="Date">
+            </div>
+        </div>
+        <div class="row mb-2">
+            <label asp-for="Sewapatra_No" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">SewaPatra ID</label>
+            <div class="col-sm-4">
+                <select asp-for="Sewapatra_No" asp-items="@ViewBag.DonationBoxes" style="font-size: 10px;" class="form-select" id="SewapatraID" aria-label="Select Sewapatra No">
+                </select>
+            </div>
+            <label asp-for="Amount" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Amount</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" style="font-size: 10px;" asp-for="Amount" id="amount">
+            </div>
+        </div>
+        <div class="row mb-2">
+            <label asp-for="Donor" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Donor</label>
+            <div class="col-sm-4">
+                <select asp-for="Donor" asp-items="@ViewBag.Donors" style="font-size: 10px;" class="form-select" id="Donorid" aria-label="Select Donor">
+                </select>
+            </div>
+            <label asp-for="Coordinator" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Coordinator</label>
+            <div class="col-sm-4">
+                <select asp-for="Coordinator" asp-items="@ViewBag.Coordinators" style="font-size: 10px;" id="CoordinatorId" class="form-select" aria-label="Select Coordinator">
+                </select>
+            </div>
+        </div>
+        <div class="row mb-2">
+            @* <label asp-for="Recurring" style="font-size: 13px;font-weight:700;" class="col-sm-2 col-form-label">Recurring</label>
+            <div class="col-sm-4">
+                <select asp-for="Recurring" style="font-size: 10px;" class="form-select" aria-label="Select Recurring Date">
+                    <option selected>Select Recurring Type</option>
+                    <option value="yearly">Yearly</option>
+                    <option value="halfyearly">Half Yearly</option>
+                    <option value="quaterly">Quaterly</option>
+                </select>
+            </div> *@
+            <label asp-for="Next_DueDate" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Next Due</label>
+            <div class="col-sm-4">
+                <input type="date" class="form-control" style="font-size: 10px;" asp-for="Next_DueDate" id="Next_DueDate">
+            </div>
+        </div>
+        @* <div class="row mb-2">
+
+        </div> *@
+        <div class="row mb-2">
+            <label asp-for="Remarks" style="font-size: 13px;font-weight:700;" class="col-sm-1 col-form-label">Remarks</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" style="font-size: 10px;" asp-for="Remarks" id="remarks">
+            </div>
+        </div>
+        <div class="text-Left">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="~/Entry/ReceiptVoucherList" class="btn btn-primary">Cancel</a>
+        </div>
+    </form>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const enteredDateInput = document.getElementById('Date');
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        enteredDateInput.value = `${year}-${month}-${day}`;
+    });
+     $(document).ready(function () {
+         $('select').select2({
+        placeholder: 'Search here...',
+                width: 'resolve'
+        });
+
+        $('#SewPatraIssueId').change(function () {
+            var SewPatraIssueId = $(this).val();
+            $.ajax({
+                url: '/Entry/GetsewaPatraIssueDetails',
+                method: 'GET',
+                data: {id: SewPatraIssueId},
+                dataType: 'json',
+                success: function(data)
+                {
+                    setData(data);
+                },
+                error: function(jqXHR, textStatus, errorThrown)
+                {
+                    console.error('Fetching Donor Data Error:', textStatus, errorThrown);
+                    displayError(textStatus, errorThrown);
+                }
+            });
+        });
+        function displayError(textStatus, errorThrown) {
+            const errorContainer = $('#error-container');
+            if(errorContainer.length){
+                errorContainer.text("An error occured: " + textStatus + ", " + errorThrown);
+            }
+        }
+        function setData(data)
+        {
+            debugger;
+            var coordinator = data.Coordinator;
+            var donor = data.Donor;
+            var donationBox = data.DonationBox;
+            var NextDate = data.NextDate;
+            $("#CoordinatorId").val(coordinator).trigger('change');
+            $("#Donorid").val(donor).trigger('change');
+            $("#SewapatraID").val(donationBox).trigger('change');
+            $("#Next_DueDate").val(NextDate.split('T')[0]).trigger('change');
+        }
+
+        
+     });
+</script>

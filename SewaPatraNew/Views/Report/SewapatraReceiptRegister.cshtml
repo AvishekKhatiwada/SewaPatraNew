@@ -1,0 +1,107 @@
+﻿@using DevExtreme.AspNet.Mvc
+@{
+    ViewData["Title"] = "Sewapatra Receipt Register";
+}
+@model List<SewaPatra.Models.ReportModels.SewaPatraReceiptRegister>
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="pagetitle mt-2">
+                        <h1>Sewapatra Receipt Register</h1>
+                        <nav>
+                            <ol class="breadcrumb">
+                                @* <li class="breadcrumb-item"><a href="index.html">Home</a></li> *@
+                                <li class="breadcrumb-item">Report</li>
+                                <li class="breadcrumb-item active">SewaPatra Receipt Register</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <form asp-action="SewaPatraReceiptRegister" asp-controller="Report" method="post">
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="fromDate" class="form-label">From Date:</label>
+                                <input type="date" id="fromDate" class="form-control" name="fromDate" value="" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="toDate" class="form-label">To Date:</label>
+                                <input type="date" id="toDate" class="form-control" name="toDate" value="" required />
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="gridContainer">
+                        @(Html.DevExtreme().DataGrid()
+                            .ID("SewaPatraReceiptRegister")
+                            .ShowBorders(true)
+                            .DataSource(Model)
+                            .KeyExpr("Id")
+                            .RemoteOperations(false)
+                            .AllowColumnReordering(true)
+                            .RowAlternationEnabled(true)
+                            .Width("100%")
+                            .Paging(prop => prop.PageSize(10))
+                            .Pager(p => p.Visible(true)
+                            .ShowPageSizeSelector(true)
+                            .AllowedPageSizes(new[] { 10, 25, 50, 100 }))
+                            .SearchPanel(s => s.Visible(true).HighlightCaseSensitive(true))
+                            .GroupPanel(g => g.Visible(true))
+                            .Grouping(g => g.AutoExpandAll(false))
+                            .AllowColumnResizing(true)
+                            .ColumnHidingEnabled(true)
+                            .ColumnChooser(c => c.Enabled(true))
+                            .Sorting(sorting => sorting.Mode(GridSortingMode.Multiple))
+                            .Export(e => e
+                            .Enabled(true)
+                            .Formats(new[] { "xlsx" })
+                            )
+                            .OnExporting("exportToExcel")
+                            .Columns(c =>
+                            {
+                                c.Add().DataField("TranId").Width(90).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">VoucherNo</div></text>);
+                                c.Add().DataField("Date").Width(100).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Date</div></text>);
+                                c.Add().DataField("DonorName").HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">DonorName</div></text>);
+                                c.Add().DataField("DonorArea").HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">DonorArea</div></text>);
+                                c.Add().DataField("CoordinatorName").HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">CoordinatorName</div></text>);
+                                c.Add().DataField("CoordinatorArea").HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">CoordinatorArea</div></text>);
+                                c.Add().DataField("DonationBox").Width(120).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">DonationBox</div></text>);
+                                c.Add().DataField("Receive_Date").Width(110).HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">ReceivedDate</div></text>);
+                                c.Add().DataField("Remarks").HeaderCellTemplate(@<text><div style="text-align: center;font-weight:bold;color:black;">Remarks</div></text>);
+                            })
+                            )
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    function showColumnChooser(e) {
+        e.component.showColumnChooser();
+    }
+    function exportToExcel(e) {
+        if (e.format === "xlsx") {
+            // Excel export (your existing code)
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('SewaPatraReceiptRegister');
+            DevExpress.excelExporter.exportDataGrid({
+                component: e.component,
+                worksheet: worksheet,
+                autoFilterEnabled: true,
+                customizeCell: function(options) {
+                    if (options.gridCell.rowType === "header") {
+                        options.font = { bold: true };
+                    }
+                }
+            }).then(function() {
+                workbook.xlsx.writeBuffer().then(function(buffer) {
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "SewaPatraReceiptRegister.xlsx");
+                });
+            });
+            e.cancel = true;
+        }
+    }
+</script>
