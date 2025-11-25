@@ -50,6 +50,7 @@ CREATE TABLE [dbo].[Donor_master](
 	[Area] [int] NULL,
 	[Coordinator] [int] NULL,
 	[Location] [varchar](MAX) NULL,
+	[CreatedAt] [datetime] DEFAULT (getdate()) NULL,
 	[Active] [bit] NULL,
 PRIMARY KEY CLUSTERED 
 (

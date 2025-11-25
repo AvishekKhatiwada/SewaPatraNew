@@ -30,5 +30,13 @@ namespace SewaPatra.BusinessLayer
         {
             return _areaMasterRepository.DeleteArea(id);
         }
+        public int CountAreas()
+        {
+            return _areaMasterRepository.CountAreas();
+        }
+        public int CountAreasLastWeek()
+        {
+            return _areaMasterRepository.CountAreasLastWeek();
+        }
     }
 }

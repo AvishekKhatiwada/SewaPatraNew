@@ -156,8 +156,30 @@ namespace SewaPatra.DataAccess
                 return rowsAffected > 0;
             }
         }
-
-
+        public int CountCoordinator()
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT COUNT(*) As CoordinatorCount FROM Coordinator_master";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                int count = (int)cmd.ExecuteScalar();
+                conn.Close();
+                return count;
+            }
+        }
+        public int CountCoordinatorlastWeek()
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT ISNULL(COUNT(*),0) CoordinatorCount FROM Coordinator_master WHERE CreatedAt >= (GETDATE()-7)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                int count = (int)cmd.ExecuteScalar();
+                conn.Close();
+                return count;
+            }
+        }
     }
 }
 

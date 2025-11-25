@@ -139,7 +139,29 @@ namespace SewaPatra.DataAccess
                 return rowsAffected > 0;
             }
         }
-
-
+        public int CountAreas()
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT COUNT(*) FROM Area_Master";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                int count = (int)cmd.ExecuteScalar();
+                conn.Close();
+                return count;
+            }
+        }
+        public int CountAreasLastWeek()
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT ISNULL(COUNT(*),0) AreaCount FROM Area_Master WHERE CreatedAt >= (GETDATE()-7)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                int count = (int)cmd.ExecuteScalar();
+                conn.Close();
+                return count;
+            }
+        }
     }
 }

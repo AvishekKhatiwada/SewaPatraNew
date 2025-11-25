@@ -30,5 +30,13 @@ namespace SewaPatra.BusinessLayer
         {
             return _donorRepository.DeleteDonor(id);
         }
+        public int CountDonor()
+        {
+            return _donorRepository.CountDonor();
+        }
+        public int CountDonorLastWeek()
+        {
+            return _donorRepository.CountDonorlastWeek();
+        }
     }
 }

@@ -36,5 +36,13 @@ namespace SewaPatra.BusinessLayer
         {
             return _coordinatorRepository.DeleteCoordinator(id);
         }
+        public int CountCoordinator()
+        {
+            return _coordinatorRepository.CountCoordinator();
+        }
+        public int CountCoordinatorLastWeek()
+        {
+            return _coordinatorRepository.CountCoordinatorlastWeek();
+        }
     }    
 }

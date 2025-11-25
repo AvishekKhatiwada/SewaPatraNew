@@ -151,5 +151,29 @@ namespace SewaPatra.DataAccess
                 return rowsAffected > 0;
             }
         }
+        public int CountDonor()
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT COUNT(*) As DonorCount FROM Donor_master";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                int count = (int)cmd.ExecuteScalar();
+                conn.Close();
+                return count;
+            }
+        }
+        public int CountDonorlastWeek()
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT ISNULL(COUNT(*),0) DonorCount FROM Donor_master WHERE CreatedAt >= (GETDATE()-7)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                int count = (int)cmd.ExecuteScalar();
+                conn.Close();
+                return count;
+            }
+        }
     }
 }
