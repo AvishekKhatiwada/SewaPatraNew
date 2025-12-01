@@ -28,38 +28,44 @@
                     <form class="row g-3" method="post" asp-action="Coordinator" asp-controller="Master">
                         <!-- Name -->
                         <div class="col-md-3">
-                            <label asp-for="Name" class="form-label">Name</label>
+                            <label asp-for="Name" class="form-label">Name</label><span style="color:red;">*</span>
                             <input type="text" class="form-control" asp-for="Name" name="Name" required>
+                            <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
 
                         <!-- Address -->
                         <div class="col-md-3">
                             <label asp-for="Address" class="form-label">Address</label>
                             <input type="text" class="form-control" asp-for="Address" name="Address">
+                            <span asp-validation-for="Address" class="text-danger"></span>
                         </div>
 
                         <!-- Email -->
                         <div class="col-md-4">
                             <label asp-for="Email" class="form-label">Email</label>
                             <input type="email" class="form-control" asp-for="Email" name="Email">
+                            <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
                         <!-- Mobile No -->
                         <div class="col-md-3">
-                            <label asp-for="Mobile_No" class="form-label">Mobile No</label>
-                            <input type="text" class="form-control" asp-for="Mobile_No" name="Mobile_No">
+                            <label asp-for="Mobile_No" class="form-label">Mobile No</label><span style="color:red;">*</span>
+                            <input type="text" class="form-control" asp-for="Mobile_No" name="Mobile_No" required>
+                            <span asp-validation-for="Mobile_No" class="text-danger"></span>
                         </div>
 
                         <!-- Alternate Mobile No -->
                         <div class="col-md-3">
                             <label asp-for="Alternate_Mobile_No" class="form-label">Alternate Mobile No</label>
                             <input type="text" class="form-control" asp-for="Alternate_Mobile_No" name="Alternate_Mobile_No">
+                            <span asp-validation-for="Alternate_Mobile_No" class="text-danger"></span>
                         </div>
 
                         <!-- City -->
                         <div class="col-md-3">
                             <label asp-for="City" class="form-label">City</label>
                             <input type="text" class="form-control" asp-for="City" name="City">
+                            <span asp-validation-for="City" class="text-danger"></span>
                         </div>
                         <div class="col-md-1"></div>
                         <!-- Area Under -->
@@ -86,7 +92,7 @@
                                 <option value="true">Active</option>
                                 <option value="false">Inactive</option>
                             </select>
-                            <span asp-validation-for="Area_Under" class="text-danger"></span>
+                            <span asp-validation-for="Active" class="text-danger"></span>
                         </div>
                         <div class="col-md-3">
                             <label asp-for="Password" class="form-label">Password</label>
